@@ -1,0 +1,4 @@
+Comando para activar el agente de microros:
+
+sudo docker run -it --rm -v /dev:/dev --privileged --net=host microros/micro-ros-agent:humble serial --dev /dev/ttyACM0 -b 115200
+

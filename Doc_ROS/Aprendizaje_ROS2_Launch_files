@@ -1,0 +1,74 @@
+Crear archivos launch para lanzar distintos nodos con un unico comando
+
+General:
+ mkdir launch ## Puede ser en cualquier parte del directorio,
+ 	      ## aunque generalmente se hace dentro del paquete y a su vez es buena practica incluir
+              ## la etiqueta  <exec_depend>ros2launch</exec_depend> dentro de package.xml del paquete
+
+Python:
+
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+	return LaunchDescription([
+			Node(
+				package='[package_name]',
+				namespace='[nombre_del_nodo]',
+				executable='[tipo_de_nodo]',
+				name='sim'
+			),
+			Node(
+				package='[package_name]',
+				namespace='[nombre_del_nodo2]', ##namespace se usa para distinguir 2 nodos del mismo tipo
+				executable='[tipo_de_nodo]',
+				name='sim'
+				remappings=[
+					('[src_topic1]','[rcvr_topic1]'),
+					('[src_topic2]','[rcvr_topic2]'),
+				]
+			)
+		])
+		
+XLM:
+
+<launch>
+	<node pkg="[package_name]" exec="[tipo_de_nodo]" namespace="[nombre_del_nodo1]" name="sim"/>
+	<node pkg="[package_name]" exec="[tipo_de_nodo]" namespace="[nombre_del_nodo2]" name="sim">
+		<remap from="[src_topic1]" to="[rcvr_topic1]"/>
+		<remap from="[src_topic2]" to="[rcvr_topic2]"/>
+	</node>
+</launch>
+
+YAML:
+
+launch:
+
+-node:
+	pkg="[package_name]" 
+	exec="[tipo_de_nodo]" 
+	namespace="[nombre_del_nodo1]" 
+	name="sim"
+-node 
+	pkg="[package_name]" 
+	exec="[tipo_de_nodo]" 
+	namespace="[nombre_del_nodo2]" 
+	name="sim"
+	remap 
+	-
+		from="[src_topic1]" 
+		to="[rcvr_topic1]"
+	-
+		from="[src_topic2]" 
+		to="[rcvr_topic2]"
+		
+PARA USAR EL LAUNCH
+
+**
+General:
+cd launch
+ros2 launch [file_name].[py,xml,yaml]
+
+Dentro de paquetes: 
+
+ros2 launch [package_name] [file_name].[py,xml,yaml]

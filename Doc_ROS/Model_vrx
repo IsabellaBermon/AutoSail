@@ -1,0 +1,28 @@
+MODELO_VRX
+
+La clase modelos se compone de varios metodos y atributos
+
+atributos:
+
+	model_name: nombre del modelo
+	model_type: tipo de modelo
+	position: posicion [x,y,z,r,p,y]
+	battery_capacity
+	wavefield_size: tamaño de las olas
+	payload: interfaces de comunicacion
+	urdf: ubicacion de modelo urdf
+
+metodos:
+
+bridges: es una funcion que genera los puentes en el contexto del mundo entre Gazebo y ROS
+
+Crea 3 listas donde se almacenaran 3 tipos de procesos: lanzamientos, nodos y puentes
+
+**Se crean 2 puentes por defecto Pose y pose estatica que son los que reportaran a ROS la pose del 
+modelo respecto al mundo
+**Dependiendo del tipo de vehiculo se generan otros puentes 
+
+spawn_args(): este metodo es el que genera los archivos del vehiculo apartir del xacro.urdf del modelo al invocar al metodo 'generate' que conjura un proceso de conversion de archivo mediante la
+creacion de procesos y subprocesos de decodificacion de archivos donde finalmente se obtienen los archivos sdf que son compatibles con gazebo garden.
+
+La mayoria de los metodos de model.py son llamados desde la funcion spawn de launch.py

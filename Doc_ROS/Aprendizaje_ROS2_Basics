@@ -1,0 +1,73 @@
+Conceptos: Espacio de trabajo
+
+Un espacio de trabajo es una carpeta que contiene paquetes de ROS antes de usar ROS2 es necesario darle la fuente(de herramientas) de instalación en la terminal que se planea usar. Esto vuelve los paquetes de ROS utilizables en esta terminal con el comando
+
+source /opt/ros/humble/setup.bash" 
+
+esto instanciará los paquetes de ROS2 en la terminal actual sin embargo si se desea instanciar para todas las terminales se puede hacer incluyendo la anterior linea en el archivo bashrc
+
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
+
+La mejor practica es crear una nueva carpeta para cada espacio de trabajo nuevo
+
+mkdir -p ~/[ros2_ws]/src
+cd ~/[ros2_ws]/src
+
+Otra buena practica es poner los nuevos paquetes(codigo) en una carpeta src(fuente) dentro del espacio de trabajo y luego navegar hasta ella.
+
+Paquetes
+
+Un paquete puede ser considerado como un contenedor para tu codigo de ROS2. Si quieres poder instalar tu codigo o compartirlo con otros, necesitas un paquete organizado. Con los paquetes puedes liberar tu codigo de ROS2 y dejar que otros construyan y lo usen de manera sencilla
+
+La creacion de paquetes usa 'ament' para construir el sistema y colcon como herramienta para construir los ejecutables 
+
+Se puede crear un paquete usando Cmake o Python(lo que varia ligeramente el proceso)
+
+Los contenidos minimos de un paquete son:
+(Cmake)
+package.xml: Contiene informacion acerca del paquete(modelo)
+CmakeLists.txt: Describe como construir el codigo dentro del paquete
+
+(python)
+package.xml
+setup.py: Contiene instrucciones de como instalar el paquete
+setup.cfg: es requerido cuando un paquete tiene ejecutables para que ros2 pueda encontrarlos 
+/<package_name>: una carpeta que tenga el mismo nombre que el paquete usado por ROS2 para encontrar el paquete y contiene '__init__.py'
+
+Para crear un paquete basico de hola mundo:
+(Cmake)
+ros2 pkg create --build-type ament_cmake --node-name [my_node] [my_package]
+(python)
+ros2 pkg create --build-type ament_python --node-name [my_node] [my_package]
+
+Esto creará toda la arquitectura necesaria para el paquete(archivos mínimos) para construir el paquete podemos utilizar:
+
+colcon build
+colcon build --packages-select [my_package] [my_package2]...
+
+Para usar el paquete construido, EN UNA NUEVA TERMINAL sobre la CARPETA [~/ros2_ws] se corre el comando:
+
+. install/local_setup.bash
+ 
+Y ahora que el paquete fue agregado a la ruta, se pueden correr los ejecutables con el comando:
+ 
+ ros2 run [my_package] [my_node]
+ 
+ IMPORTANTE: Si se desea lanzar otro subproceso en una nueva terminal basta con usar el comado:
+ 
+ gnome-terminal -- "bash -c \"[comando a lanzar]; exec bash\"" 
+ 
+ ...por ejemplo se podria lanzar desde una terminal dos scripts para lanzar el publisher, subscriber, y simulacion en gazebo desde distintas terminales de manera que no se bloqueen los procesos
+ 
+ 
+ OTRAS BUENAS PRACTICAS 
+ 
+ - Instalar un entorno de desarrollo que nos permita ver la arquitectura del sistema y tener la opcion de visualizar errores, cambios y/o opciones de autocompletado
+- construi el espacio de trabajo con la opcion --symlink-install esto con el objetivo de que los cambios en los paquetes se reflejen automaticamente sin necesidad de hacer una reconstruccion de los mismos
+- hacer un source al espacio de trabajo dentro del script ~/.bashrc
+	echo ". ~/[workspace]/install/setup.bash" >> ~/.bashrc
+- Para llamar los paquetes desde la terminal con el comando 'ros2 run [package] [node]' es necesario modificar los archivos presentes en el setup.py indicando en el apartado del console-scrip el nombre y la ruta relativa al paquete del script donde se encuentra creado el nodo ademas de la funcion que este debe correr para inicializarlo
+
+	ex : Basic_control_node= my_sailboat_controller.my_controller_node:main
+

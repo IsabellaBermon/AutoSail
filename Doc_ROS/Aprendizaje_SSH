@@ -1,0 +1,9 @@
+Conexiones SSH- Abrir una terminal remota para compartir archivos entre dos maquinas
+
+ip addr # Nos dará informacion de la direccion ip de nuestro equipo 
+sudo apt install openssh-server
+ssh [server]@[client_IP]:[port]
+
+Usualmente se usa el puerto 22, ejemplo:
+ssh PC@192.168.1.50:22
+

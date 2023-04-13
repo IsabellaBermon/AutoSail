@@ -1,0 +1,54 @@
+Crear mensajes y servicios PERSONALIZADOS
+
+Crearemos dentro de un *paquete* un subdirectorio(paquete) para los mensajes y servicios
+mkdir msg
+mkdir srv 
+
+Dentro de dicho directorio crearemos un archivo "Num.msg"
+donde se definirá:
+
+int64 num
+
+este mensaje transfiere un entero de 64 bits llamado 'num'
+(Nota personal: Se parece a la creacion de las estructuras en C).
+
+Tambien es posible describir mensajes compuestos por otros paquetes de mensajes
+
+geometry_msgs/Point
+float64 radius
+
+
+SERVICIOS
+Los servicios de manera similar se crean con la extension *.srv 
+y la estructura del servicio
+
+tipo variables_de_entrada
+""
+---
+tipo variables_de_salida
+""
+
+Para convertir dichas interfaces en codigo de un lenguaje especifico
+en el CmakeList.txt se deben incluir 
+
+'find_package(geometry_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/Num.msg"
+  "msg/Sphere.msg"
+  "srv/AddThreeInts.srv"
+  DEPENDENCIES geometry_msgs # Add packages that above messages depend on, in this case geometry_msgs for Sphere.msg
+)'
+
+Y a package.xml
+
+<depend>geometry_msgs</depend> 
+
+<build_depend>rosidl_default_generators</build_depend>
+
+<exec_depend>rosidl_default_runtime</exec_depend>
+
+<member_of_group>rosidl_interface_packages</member_of_group>
+
+

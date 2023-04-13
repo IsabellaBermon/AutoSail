@@ -1,0 +1,63 @@
+Proceso de vrx
+
+se lanza con el comando 
+
+ros2 launch vrx_gz competition.launch.py world:=sydney_regatta
+
+Este archivo revisa 
+**Si existe un archivo de configuracion observando el argumento 'config_file'
+**Si se especifica un mundo observando el argumento 'world' 
+	pdt: En este caso existe 'world:=sydney_regatta'
+**Si se especifica un modo de simulacion con 'sim_mode'
+**Si se especifican topicos para hacer puentes 
+**Si se especifica un modelo de robot con 'robot'  
+** Headless: simulacion sin GUI con 'headless' 
+** robot_urdf con el argumento 'urdf'
+
+Se genera entonces un arreglo o lista de procesos a lanzar 'lauch_processes'
+al igual que una lista de modelos para lanzar 'models'
+
+si existe el archivo de configuracion de el se extraen los modelos,
+sino, el modelo por defecto sera el 'wamv'
+
+!!!TODOS LOS MODELOS SE CREAN SOBRE UNA CLASE 'Model' LA CUAL DETERMINA MUCHAS CARACTERISTICAS DEL MODELO POR TANTO SERA UNA GUIA APARTE A ESTE DOCUMENTO!!!!
+
+Se agregan dos funciones tipo lanzamiento de una subcarpeta mas profunda de vrx con el comando
+
+-launch_processes.extend(vrx_gz.launch.simulation(world_name,headless))
+-launch_processes.extend(vrx_gz.launch.spawn(sim_mode,world_name,models,robot))
+
+finalmente si el modo de simulacion es bridge o full se genera el proceso de creacion de puentes
+
+
+
+Invesitigando vrx_gz.launch.py 
+	(ojo: el que esta en la carpeta src no el de el mismo nivel que competition.launch.py)
+
+En este archivo existen varias funciones que al parecer usan los argumentos del nivel anterior
+
+
+
+FUNCION simulation:
+
+crea una lista con lo que parecen ser comandos de consola en linux para gazebo 'gz_args'
+por defecto entrega la lista     'gz_args = ['-v 4', '-r']' y dependiendo de los parametros agrega
+o no la GUI y el mundo del parametro
+
+-luego se crea una variable 'gz_sim' donde se guarda el proceso del paquete de gazebo que crea(lanza) la simulacion y se guarda la lista de argumentos en una varible de linux(pdt:si, linux no python) con el mismo nombre separados por un espacio
+
+-posterior se crea otro procesos similar para monitorear si gazebo esta o no activo
+
+-Finalmente se crea un monitor de evento que en caso de que se termine la simulacion genere un mensaje y termine los procesos sin generar warnings
+
+esta funcion retorna la lista de procesos creados!!!
+
+
+
+
+
+FUNCION spawn: (A mi parecer el mas importante!!!)
+
+crea una nueva lista de procesos local 'launch_processes'
+
+
